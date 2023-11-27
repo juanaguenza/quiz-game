@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"time"
+	"flag"
 	// 	"math/rand"
 	"strings"
 )
@@ -14,6 +15,11 @@ var correctAnswers = 0
 var wrongAnswers = 0
 
 func main() {
+
+	// Parsing flags
+	timePtr := flag.Int("t", 10, "amt of time for the quiz")
+	flag.Parse()
+
 	file, err := os.Open("problems.csv")
 
 	if err != nil {
@@ -47,7 +53,7 @@ func main() {
 		response = strings.ToLower(response)
 	}
 
-	beginQuiz(questions, answers)
+	beginQuiz(questions, answers, *timePtr)
 
 	fmt.Println("Correct answers:", correctAnswers)
 	fmt.Println("Wrong answers:", wrongAnswers)
@@ -56,9 +62,10 @@ func main() {
 }
 
 // beginQuiz will start the quiz, quiz will end whenever timer runs out
-func beginQuiz(problems []string, answers []string) {
+func beginQuiz(problems []string, answers []string, duration int) {
 	// Start the timer
-	timer := time.NewTimer(10 * time.Second)
+	fmt.Println(duration)
+	timer := time.NewTimer(time.Duration(duration) * time.Second)
 
 	// Ask each question
 	for i := range problems {
