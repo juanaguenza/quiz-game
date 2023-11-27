@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
-// 	"time"
-// 	"math/rand"
+	"time"
+	// 	"math/rand"
 	"strings"
 )
 
@@ -57,11 +57,21 @@ func main() {
 
 // beginQuiz will start the quiz, quiz will end whenever timer runs out
 func beginQuiz(problems []string, answers []string) {
+	// Start the timer
+	timer := time.NewTimer(10 * time.Second)
+
 	// Ask each question
 	for i := range problems {
-		askQuestion(problems[i], answers[i])
+		// If the timer finishes, end the game
+		// Otherwise continue asking questions
+		select {
+			case <- timer.C:
+				fmt.Println("Time ran out...")
+				return
+			default:
+				askQuestion(problems[i], answers[i])
+		}
 	}
-
 }
 
 // askQuestion will ask the user a question and receive their input
@@ -72,7 +82,7 @@ func askQuestion(question string, correctAnswer string) {
 	// Get the user's answer
 	var answer string
 	fmt.Scanln(&answer)
-	
+
 	// Grade the user's input
 	correct := gradeInput(answer, correctAnswer)
 	keepScore(correct)
@@ -81,15 +91,12 @@ func askQuestion(question string, correctAnswer string) {
 // gradeInput will grade the input of the user
 // returns true if correct, otherwise false
 func gradeInput(answer string, correctAnswer string) bool {
-	if answer == correctAnswer {
-		return true
-	}
-	return false
+	return answer == correctAnswer
 }
 
 // keepScore will keep the score of the user
 func keepScore(correct bool) {
-	if correct == true {
+	if correct {
 		correctAnswers += 1
 	} else {
 		wrongAnswers += 1
