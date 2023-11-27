@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 	"flag"
-	// 	"math/rand"
+	"math/rand"
 	"strings"
 )
 
@@ -17,7 +17,8 @@ var wrongAnswers = 0
 func main() {
 
 	// Parsing flags
-	timePtr := flag.Int("t", 10, "amt of time for the quiz")
+	timePtr := flag.Int("t", 10, "Timer duration for the quiz")
+	shufflePtr := flag.String("s", "no", "Indicates if we will shuffle the order of the questions")
 	flag.Parse()
 
 	file, err := os.Open("problems.csv")
@@ -36,6 +37,10 @@ func main() {
 
 	if err != nil {
 		log.Fatal("Error reading records")
+	}
+
+	if strings.ToLower(*shufflePtr) == "yes" {
+		rand.Shuffle(len(records), func(i, j int) { records[i], records[j] = records[j], records[i] })
 	}
 
 	var questions []string
@@ -64,7 +69,6 @@ func main() {
 // beginQuiz will start the quiz, quiz will end whenever timer runs out
 func beginQuiz(problems []string, answers []string, duration int) {
 	// Start the timer
-	fmt.Println(duration)
 	timer := time.NewTimer(time.Duration(duration) * time.Second)
 
 	// Ask each question
