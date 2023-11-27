@@ -21,6 +21,7 @@ func main() {
 	shufflePtr := flag.String("s", "no", "Indicates if we will shuffle the order of the questions")
 	flag.Parse()
 
+	// Open and read problems.csv containing the questions and answers
 	file, err := os.Open("problems.csv")
 
 	if err != nil {
@@ -39,10 +40,12 @@ func main() {
 		log.Fatal("Error reading records")
 	}
 
+	// Shuffle the order of the questions given our flag was set to yes
 	if strings.ToLower(*shufflePtr) == "yes" {
 		rand.Shuffle(len(records), func(i, j int) { records[i], records[j] = records[j], records[i] })
 	}
 
+	// Split the questions and answers into 2 separate lists
 	var questions []string
 	var answers []string
 
@@ -51,6 +54,7 @@ func main() {
 		answers = append(answers, record[1])
 	}
 
+	// Continuously ask the user if they want to do the quiz until it starts
 	var response string
 	for response != "yes" {
 		fmt.Print("Are you ready to play? (yes/no):")
